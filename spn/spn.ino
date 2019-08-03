@@ -100,7 +100,31 @@ void enc(u8 *text, u8 *rnd) {
 
 int main(void)
 {
+  u32 time1, time2;
+  init();
+  Serial.begin(9600);
+  // 테스트 벡터 확인 과정 시작
+  Serial.println("Test Vector Start");
   key_gen(rnd, key);
   enc(text, rnd);
+  if (text[0] != 0xA2 || text[1] != 0x40) {
+    Serial.println("Test Vector Failed");
+    delay(1000);
+    return 0;
+  } else {
+    Serial.println("Test Vector Succeeded");
+  }
+  // 테스트 벡터 확인 과정 끝
+
+  //벤치마크 과정 시작
+  for (int i = 0; i < 10000; i++) {
+    key_gen(rnd, key);
+    enc(text, rnd);
+  }
+  time2 = millis();
+  Serial.println((time2 - time1));
+  //벤치마크 과정 끝
+  
+  delay(1000);
   return 0;
 }
