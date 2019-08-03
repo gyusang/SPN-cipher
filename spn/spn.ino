@@ -43,7 +43,7 @@ void enc(u8 *text, u8 *rnd) {
     tmp1 = ~((key1 & key2) + i);
     tmp2 = ~((key1 | key2) - i);
     
-    if (i & 1) {
+    if (i % 2 != 0) {
       key1 = tmp1;
       key2 = tmp2;
       tmp = text1;
