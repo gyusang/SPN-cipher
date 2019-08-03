@@ -84,6 +84,8 @@ int main(void)
   // 테스트 벡터 확인 과정 끝
 
   //벤치마크 과정 시작
+  for(;;){
+  time1 = millis();
   for (int i = 0; i < 10000; i++) {
     key_gen(rnd, key);
     enc(text, rnd);
@@ -91,7 +93,7 @@ int main(void)
   time2 = millis();
   Serial.println((time2 - time1));
   //벤치마크 과정 끝
-
+  }
   delay(1000);
   return 0;
 }
