@@ -28,8 +28,8 @@ u8 sbox2[256] = {
 };
 
 void key_gen(u8 *rnd, u8 *key) {
-    rnd[0] = key[0];
-    rnd[1] = key[1];
+  rnd[0] = key[0];
+  rnd[1] = key[1];
 }
 
 void enc(u8 *text, u8 *rnd) {
@@ -85,12 +85,15 @@ int main(void)
   // 테스트 벡터 확인 과정 끝
 
   //벤치마크 과정 시작
-  for (int i = 0; i < 10000; i++) {
-    key_gen(rnd, key);
-    enc(text, rnd);
+  for (;;) {
+    time1 = millis()
+    for (int i = 0; i < 10000; i++) {
+      key_gen(rnd, key);
+      enc(text, rnd);
+    }
+    time2 = millis();
+    Serial.println((time2 - time1));
   }
-  time2 = millis();
-  Serial.println((time2 - time1));
   //벤치마크 과정 끝
 
   delay(1000);
