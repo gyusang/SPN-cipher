@@ -49,6 +49,7 @@ void key_gen(u8 *rnd, u8 *key) {
     rnd[i * 2 - 1] = key2;
   }
 }
+
 void enc(u8 *text, u8 *rnd) {
   u8 text1 = text[0];
   u8 text2 = text[1];
