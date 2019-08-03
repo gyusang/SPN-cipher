@@ -28,35 +28,43 @@ u8 sbox2[256] = {
 };
 
 void key_gen(u8 *rnd, u8 *key) {
-    rnd[0] = key[0];
-    rnd[1] = key[1];
+  u8 key1 = key[0];
+  u8 key2 = key[1];
+  u8 tmp1, tmp2;
+
+  int i;
+  for (i = 1; i <= ROUND_NUM; i++) {
+    tmp1 = ~((key1 & key2) + i);
+    tmp2 = ~((key1 | key2) - i);
+
+    if (i % 2 != 0) {
+      key1 = tmp1;
+      key2 = tmp2;
+    } else {
+      key1 = tmp2;
+      key2 = tmp1;
+    }
+
+    rnd[i * 2 - 2] = key1;
+    rnd[i * 2 - 1] = key2;
+  }
 }
 void enc(u8 *text, u8 *rnd) {
   u8 text1 = text[0];
   u8 text2 = text[1];
   u8 tmp;
   u8 tmp1, tmp2;
-  u8 key1 = rnd[0];
-  u8 key2 = rnd[1];
+
   int i;
-  for (i = 1; i <= ROUND_NUM; i++) {
-    tmp1 = ~((key1 & key2) + i);
-    tmp2 = ~((key1 | key2) - i);
-    
-    if (i % 2 != 0) {
-      key1 = tmp1;
-      key2 = tmp2;
+  for (i = 0; i < ROUND_NUM; i++) {
+    if (i % 2 == 0) {
       tmp = text1;
       text1 = text2;
       text2 = tmp;
     }
-    else {
-      key1 = tmp2;
-      key2 = tmp1;
-    }
 
-    tmp1 = ((text1 + text2 + 1) ^ text2) - key1;
-    tmp2 = (text2 + 1) ^ key2;
+    tmp1 = ((text1 + text2 + 1) ^ text2) - rnd[i * 2 + 0];
+    tmp2 = (text2 + 1) ^ rnd[i * 2 + 1];
 
     text1 = ~tmp1;
     text2 = sbox2[tmp2];
