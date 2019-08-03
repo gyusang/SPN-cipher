@@ -33,14 +33,11 @@ void key_gen(u8 *rnd, u8 *key) {
   u8 tmp1, tmp2;
 
   int i;
-  for (i = 0; i < ROUND_NUM; i++) {
-    key1 = ~key1;
-    key2 = ~key2;
+  for (i = 1; i <= ROUND_NUM; i++) {
+    tmp1 = ~((key1 & key2) + i);
+    tmp2 = ~((key1 | key2) - i);
 
-    tmp1 = (key1 | key2) + ~i;
-    tmp2 = (key1 & key2) - ~i;
-
-    if (i % 2 == 0) {
+    if (i % 2 != 0) {
       key1 = tmp1;
       key2 = tmp2;
     } else {
@@ -48,8 +45,8 @@ void key_gen(u8 *rnd, u8 *key) {
       key2 = tmp1;
     }
 
-    rnd[i * 2 + 0] = key1;
-    rnd[i * 2 + 1] = key2;
+    rnd[i * 2 - 2] = key1;
+    rnd[i * 2 - 1] = key2;
   }
 }
 void enc(u8 *text, u8 *rnd) {
@@ -60,17 +57,14 @@ void enc(u8 *text, u8 *rnd) {
 
   int i;
   for (i = 0; i < ROUND_NUM; i++) {
-    text1 = ~text1;
-    text2 = ~text2;
-
     if (i % 2 == 0) {
       tmp = text1;
       text1 = text2;
       text2 = tmp;
     }
 
-    tmp1 = ((text1 + text2) ^ text2) - rnd[i * 2 + 0];
-    tmp2 = (text1 - (text2 + text1)) ^ rnd[i * 2 + 1];
+    tmp1 = ((text1 + text2 + 1) ^ text2) - rnd[i * 2 + 0];
+    tmp2 = (text2 + 1) ^ rnd[i * 2 + 1];
 
     text1 = ~tmp1;
     text2 = sbox2[tmp2];
@@ -105,7 +99,7 @@ int main(void)
   time2 = millis();
   Serial.println((time2 - time1));
   //벤치마크 과정 끝
-  
+
   delay(1000);
   return 0;
 }
